@@ -1,6 +1,7 @@
 import time
 from winotify import Notification, audio
 import customtkinter as ctk
+from threading import Thread
 
 def change_theme():
     if switch_var.get() == "on":
@@ -8,37 +9,43 @@ def change_theme():
     else:
         ctk.set_appearance_mode("dark")
 
+def show_notification():
+    toast = Notification(app_id="Bruh",
+                         title="Message Title",
+                         msg="Hi!",
+                         duration="long",
+                         icon=r"D:\Dokumenty\Photos\ytlogo.png")
+
+    toast.set_audio(audio.LoopingAlarm, loop=False)
+    toast.add_actions(label="Click Me!", launch="https://www.python.org/")
+    toast.show()
+
+def countdown(seconds):
+    time_elapsed = 0
+    while time_elapsed < seconds:
+        time.sleep(1)
+        time_elapsed += 1
+
+        time_left = seconds - time_elapsed
+        minutes_left = time_left // 60
+        seconds_left = time_left % 60
+
+        print(f"{minutes_left:02}:{seconds_left:02}")
+
+    show_notification()
+
 def alarm_start():
-    def wiadomosc():
-        toast = Notification(app_id="Bruh",
-                             title="Message Title",
-                             msg="Hi!",
-                             duration="long",
-                             icon=r"D:\Dokumenty\Photos\ytlogo.png")
+    input_value = entry.get()
+    if input_value.isnumeric() and input_value != "":
+        sec = int(input_value)
+        if sec > 0:
+            Thread(target=countdown, args=(sec,)).start()
+        else:
+            print("Please enter a positive number.")
+    else:
+        print("Please enter a valid number.")
 
-        toast.set_audio(audio.LoopingAlarm, loop=False)
-        toast.add_actions(label="Click Me!", launch="https://www.python.org/")
-        toast.show()
-
-    def alarm(seconds):
-        time_elapsed = 0
-
-        while time_elapsed < seconds:
-            time.sleep(1)
-            time_elapsed += 1
-
-            time_left = seconds - time_elapsed
-            minutes_left = time_left // 60
-            seconds_left = time_left % 60
-
-            print(f"{minutes_left:02}:{seconds_left:02}")
-
-        wiadomosc()
-
-    if entry.get().isnumeric() and entry.get() != "":
-        sec = int(entry.get())
-        alarm(sec)
-
+# GUI Setup
 app = ctk.CTk()
 app.geometry("1500x1080")
 app.title("To do list desktop app")
