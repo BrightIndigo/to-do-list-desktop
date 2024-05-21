@@ -87,29 +87,31 @@ def gui_setup():
             input_value_hours = entry_hours.get()
             input_value_minutes = entry_minutes.get()
             input_value_seconds = entry_seconds.get()
+            if entry_title.get != "" and entry_message.get() != "":
+                count_hours = False
+                count_minutes = False
+                count_seconds = False
+                sec = 0
 
-            count_hours = False
-            count_minutes = False
-            count_seconds = False
-            sec = 0
+                if input_value_seconds.isnumeric() and input_value_seconds != "":
+                    count_seconds = True
+                    sec += int(input_value_seconds)
+                if input_value_minutes.isnumeric() and input_value_minutes != "":
+                    count_minutes = True
+                    sec += int(input_value_minutes) * 60
+                if input_value_hours.isnumeric() and input_value_hours != "":
+                    count_hours = True
+                    sec += int(input_value_hours) * 3600
 
-            if input_value_seconds.isnumeric() and input_value_seconds != "":
-                count_seconds = True
-                sec += int(input_value_seconds)
-            if input_value_minutes.isnumeric() and input_value_minutes != "":
-                count_minutes = True
-                sec += int(input_value_minutes) * 60
-            if input_value_hours.isnumeric() and input_value_hours != "":
-                count_hours = True
-                sec += int(input_value_hours) * 3600
-
-            if count_seconds or count_minutes or count_hours:
-                if sec > 0:
-                    Thread(target=countdown, args=(sec,)).start()
+                if count_seconds or count_minutes or count_hours:
+                    if sec > 0:
+                        Thread(target=countdown, args=(sec,)).start()
+                    else:
+                        print("Please enter a positive number.")
                 else:
-                    print("Please enter a positive number.")
+                    print("Please enter a valid number.")
             else:
-                print("Please enter a valid number.")
+                print("Complete the fields.")
 
         text_var_timer = ctk.StringVar(value="Set a timer")
 
@@ -145,8 +147,10 @@ def gui_setup():
                                    )
         entry_seconds.place(relx=0.54, rely=0.55, anchor=ctk.CENTER)
 
+
         button_alarm_start = ctk.CTkButton(master=app, text="Start the countdown", command=alarm_start)
         button_alarm_start.place(relx=0.5, rely=0.6, anchor=ctk.CENTER)
+
 
     def change_theme():
         if switch_var.get() == "on":
