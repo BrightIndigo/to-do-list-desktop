@@ -6,7 +6,8 @@ from threading import Thread
 app = ctk.CTk()
 app.geometry("1920x1080")
 app.title("To do list")
-
+ctk.set_appearance_mode("dark")
+color_palette = ["#9d0c1d", "#851e13", "#50120a", "#2b1507", "#19180a"]
 def gui_setup():
     for widget in app.winfo_children():
         widget.destroy()
@@ -15,8 +16,8 @@ def gui_setup():
         for widget in app.winfo_children():
             widget.destroy()
 
-        button_gui_setup = ctk.CTkButton(master=app, text="Menu", command=gui_setup)
-        button_gui_setup.place(relx=0.5, rely=0.02, anchor=ctk.CENTER)
+        button_gui_setup = ctk.CTkButton(master=app, text="Menu", command=gui_setup, width=200, height=50, fg_color=color_palette[2], corner_radius=20, hover_color=color_palette[1])
+        button_gui_setup.pack(padx=20, pady=10)
 
         text_var_title = ctk.StringVar(value="Set a title")
 
@@ -25,7 +26,7 @@ def gui_setup():
                              width=120,
                              height=25,
                              corner_radius=8)
-        label_title.place(relx=0.5, rely=0.07, anchor=ctk.CENTER)
+        label_title.pack(padx=5, pady=5)
 
         entry_title = ctk.CTkEntry(master=app,
                                      placeholder_text="Title",
@@ -34,7 +35,7 @@ def gui_setup():
                                      border_width=2,
                                      corner_radius=10
                                      )
-        entry_title.place(relx=0.5, rely=0.095, anchor=ctk.CENTER)
+        entry_title.pack(padx=5, pady=5)
 
         text_var_message = ctk.StringVar(value="Set a message")
 
@@ -43,7 +44,7 @@ def gui_setup():
                              width=120,
                              height=25,
                              corner_radius=8)
-        label_message.place(relx=0.5, rely=0.12, anchor=ctk.CENTER)
+        label_message.pack(padx=5, pady=5)
 
         entry_message = ctk.CTkEntry(master=app,
                                    placeholder_text="Message",
@@ -52,7 +53,7 @@ def gui_setup():
                                    border_width=2,
                                    corner_radius=10
                                    )
-        entry_message.place(relx=0.5, rely=0.14, anchor=ctk.CENTER)
+        entry_message.pack(padx=5, pady=5)
 
 
         def show_notification():
@@ -120,7 +121,7 @@ def gui_setup():
                              width=120,
                              height=25,
                              corner_radius=8)
-        label.place(relx=0.5, rely=0.5, anchor=ctk.CENTER)
+        label.pack(padx=5, pady=5)
 
         entry_hours = ctk.CTkEntry(master=app,
                              placeholder_text="Hours",
@@ -128,7 +129,7 @@ def gui_setup():
                              height=75,
                              border_width=2,
                              corner_radius=10)
-        entry_hours.place(relx=0.46, rely=0.55, anchor=ctk.CENTER)
+        entry_hours.place(relx=0.46, rely=0.25, anchor=ctk.CENTER)
 
         entry_minutes = ctk.CTkEntry(master=app,
                                    placeholder_text="Minutes",
@@ -136,7 +137,7 @@ def gui_setup():
                                    height=75,
                                    border_width=2,
                                    corner_radius=10)
-        entry_minutes.place(relx=0.5, rely=0.55, anchor=ctk.CENTER)
+        entry_minutes.place(relx=0.5, rely=0.25, anchor=ctk.CENTER)
 
         entry_seconds = ctk.CTkEntry(master=app,
                                    placeholder_text="Seconds",
@@ -145,12 +146,11 @@ def gui_setup():
                                    border_width=2,
                                    corner_radius=10
                                    )
-        entry_seconds.place(relx=0.54, rely=0.55, anchor=ctk.CENTER)
+        entry_seconds.place(relx=0.54, rely=0.25, anchor=ctk.CENTER)
 
 
-        button_alarm_start = ctk.CTkButton(master=app, text="Start the countdown", command=alarm_start)
-        button_alarm_start.place(relx=0.5, rely=0.6, anchor=ctk.CENTER)
-
+        button_alarm_start = ctk.CTkButton(master=app, text="Start the countdown", command=alarm_start, fg_color=color_palette[2], corner_radius=20, hover_color=color_palette[1])
+        button_alarm_start.place(relx=0.5, rely=0.3, anchor=ctk.CENTER)
 
     def change_theme():
         if switch_var.get() == "on":
@@ -158,8 +158,8 @@ def gui_setup():
         else:
             ctk.set_appearance_mode("dark")
 
-    switch_var = ctk.StringVar(value="on")
-    switch_change_theme = ctk.CTkSwitch(master=app, text="Theme", command=change_theme, variable=switch_var, onvalue="on", offvalue="off")
+    switch_var = ctk.StringVar(value="off")
+    switch_change_theme = ctk.CTkSwitch(master=app, text="Change theme", command=change_theme, variable=switch_var, onvalue="on", offvalue="off")
     switch_change_theme.pack(padx=20, pady=10)
 
     notification_timer_button = ctk.CTkButton(master=app,
@@ -167,9 +167,11 @@ def gui_setup():
                                               command=timer_window,
                                               corner_radius=20,
                                               border_width=1,
-                                              border_color="white",
+                                              border_color=color_palette[1],
                                               width=300,
                                               height=120,
+                                              fg_color=color_palette[2],
+                                              hover_color=color_palette[1],
                                               )
     notification_timer_button.pack(padx=20, pady=10)
 
