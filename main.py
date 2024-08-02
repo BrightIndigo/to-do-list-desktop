@@ -3,8 +3,14 @@ from winotify import Notification, audio
 import customtkinter as ctk
 from threading import Thread
 
+def set_windowed_fullscreen(root):
+    root.state('zoomed')
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    root.geometry(f"{screen_width}x{screen_height}")
+
 app = ctk.CTk()
-app.geometry("1920x1080")
+set_windowed_fullscreen(app)
 app.title("To do list")
 ctk.set_appearance_mode("dark")
 color_palette = ["#9d0c1d", "#851e13", "#50120a", "#2b1507", "#19180a"]
@@ -12,7 +18,7 @@ def gui_setup():
     for widget in app.winfo_children():
         widget.destroy()
 
-    def timer_window():
+    def Set_notification_window():
         for widget in app.winfo_children():
             widget.destroy()
 
@@ -164,7 +170,7 @@ def gui_setup():
 
     notification_timer_button = ctk.CTkButton(master=app,
                                               text="Set notification",
-                                              command=timer_window,
+                                              command=Set_notification_window,
                                               corner_radius=20,
                                               border_width=1,
                                               border_color=color_palette[1],
@@ -174,6 +180,68 @@ def gui_setup():
                                               hover_color=color_palette[1],
                                               )
     notification_timer_button.pack(padx=20, pady=10)
+
+    def add_tasks():
+        for widget in app.winfo_children():
+            widget.destroy()
+
+        button_gui_setup = ctk.CTkButton(master=app, text="Menu", command=gui_setup, width=200, height=50, fg_color=color_palette[2], corner_radius=20, hover_color=color_palette[1])
+        button_gui_setup.pack(padx=20, pady=10)
+
+        label = ctk.CTkLabel(app, text="", fg_color="transparent", font=("Verdana", 18))
+        label.pack(padx=20, pady=15)
+
+        label = ctk.CTkLabel(app, text="Set priority of your task", fg_color="transparent", font=("Verdana", 18))
+        label.pack(padx=20, pady=0)
+
+        def optionmenu_callback(choice):
+            print("optionmenu dropdown clicked:", choice)
+        optionmenu = ctk.CTkOptionMenu(app, values=["Important", "Average", "Negligible"],
+                                       command=optionmenu_callback, fg_color=(color_palette[1]),
+                                       button_color=color_palette[1], button_hover_color=color_palette[2])
+        optionmenu.set("Important")
+        optionmenu.pack(padx=20, pady=10)
+
+        label = ctk.CTkLabel(app, text="", fg_color="transparent", font=("Verdana", 18))
+        label.pack(padx=20, pady=15)
+
+        label = ctk.CTkLabel(app, text="Write what you need to do", fg_color="transparent", font=("Verdana", 18))
+        label.pack(padx=20, pady=0)
+
+        entry = ctk.CTkEntry(app, placeholder_text="Type here", width=300, height=50)
+        entry.pack(padx=20, pady=10)
+
+
+
+    tasks_button = ctk.CTkButton(master=app,
+                                              text="Add tasks",
+                                              command=add_tasks,
+                                              corner_radius=20,
+                                              border_width=1,
+                                              border_color=color_palette[1],
+                                              width=300,
+                                              height=120,
+                                              fg_color=color_palette[2],
+                                              hover_color=color_palette[1],
+                                              )
+    tasks_button.pack(padx=20, pady=10)
+
+    def view_tasks():
+        for widget in app.winfo_children():
+            widget.destroy()
+
+    view_tasks_button = ctk.CTkButton(master=app,
+                                              text="View tasks",
+                                              command=add_tasks,
+                                              corner_radius=20,
+                                              border_width=1,
+                                              border_color=color_palette[1],
+                                              width=300,
+                                              height=120,
+                                              fg_color=color_palette[2],
+                                              hover_color=color_palette[1],
+                                              )
+    view_tasks_button.pack(padx=20, pady=10)
 
 
 
