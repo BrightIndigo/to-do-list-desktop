@@ -2,6 +2,8 @@ import time
 from winotify import Notification, audio
 import customtkinter as ctk
 from threading import Thread
+from tkcalendar import Calendar, DateEntry
+from datetime import datetime
 
 def set_windowed_fullscreen(root):
     root.state('zoomed')
@@ -211,6 +213,29 @@ def gui_setup():
         entry = ctk.CTkEntry(app, placeholder_text="Type here", width=300, height=50)
         entry.pack(padx=20, pady=10)
 
+        label = ctk.CTkLabel(app, text="", fg_color="transparent", font=("Verdana", 18))
+        label.pack(padx=20, pady=15)
+
+        label = ctk.CTkLabel(app, text="Choose day of your task", fg_color="transparent", font=("Verdana", 18))
+        label.pack(padx=20, pady=0)
+
+        #calendar
+        now = datetime.now()
+        current_year = now.year
+        current_month = now.month
+        current_day = now.day
+
+        def get_date():
+            selected_date = cal.get_date()
+            print("Selected Date is:", selected_date)
+
+        cal = Calendar(app, selectmode='day', year=current_year, month=current_month, day=current_day, selectbackground=color_palette[1])
+        cal.pack(padx=20, pady=10)
+        button = ctk.CTkButton(app, text="Confirm", command=get_date, fg_color=color_palette[1], corner_radius=20, hover_color=color_palette[2])
+        button.pack(padx=20, pady=10)
+
+
+
 
 
     tasks_button = ctk.CTkButton(master=app,
@@ -232,7 +257,7 @@ def gui_setup():
 
     view_tasks_button = ctk.CTkButton(master=app,
                                               text="View tasks",
-                                              command=add_tasks,
+                                              command=view_tasks,
                                               corner_radius=20,
                                               border_width=1,
                                               border_color=color_palette[1],
