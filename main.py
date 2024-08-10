@@ -171,7 +171,7 @@ def gui_setup():
     switch_change_theme.pack(padx=20, pady=10)
 
     notification_timer_button = ctk.CTkButton(master=app,
-                                              text="Set notification",
+                                              text="Set notification timer",
                                               command=Set_notification_window,
                                               corner_radius=20,
                                               border_width=1,
@@ -196,13 +196,30 @@ def gui_setup():
         label = ctk.CTkLabel(app, text="Set priority of your task", fg_color="transparent", font=("Verdana", 18))
         label.pack(padx=20, pady=0)
 
-        def optionmenu_callback(choice):
+        def optionmenu_clicked(choice):
             print("optionmenu dropdown clicked:", choice)
-        optionmenu = ctk.CTkOptionMenu(app, values=["Important", "Average", "Negligible"],
-                                       command=optionmenu_callback, fg_color=(color_palette[1]),
-                                       button_color=color_palette[1], button_hover_color=color_palette[2])
-        optionmenu.set("Important")
-        optionmenu.pack(padx=20, pady=10)
+            return choice
+
+        def get_data():
+            selected_date = cal.get_date()
+            print("Selected Date is:", selected_date)
+            text = entry.get()
+            print("Entry text:", text)
+            selected_option = option_var.get()
+            print("Selected option:", selected_option)
+            data = selected_option + " " + text + " " + selected_date
+            with open("tasks.txt", "w") as file:
+                file.write(data)
+        #zczytaj ilość wierszy w tasks.txt i dodawaj kolejne zadania wiersz niżej od pozostałych
+        
+
+        option_var = ctk.StringVar(value="Important")
+        option_menu = ctk.CTkOptionMenu(app, values=["Important", "Average", "Negligible"],
+                                        variable=option_var,
+                                        fg_color=color_palette[1],         # Background color of the option menu
+                                        button_color=color_palette[1],
+                                        button_hover_color=color_palette[2])
+        option_menu.pack(padx=20, pady=15)
 
         label = ctk.CTkLabel(app, text="", fg_color="transparent", font=("Verdana", 18))
         label.pack(padx=20, pady=15)
@@ -225,14 +242,12 @@ def gui_setup():
         current_month = now.month
         current_day = now.day
 
-        def get_date():
-            selected_date = cal.get_date()
-            print("Selected Date is:", selected_date)
-
         cal = Calendar(app, selectmode='day', year=current_year, month=current_month, day=current_day, selectbackground=color_palette[1])
         cal.pack(padx=20, pady=10)
-        button = ctk.CTkButton(app, text="Confirm", command=get_date, fg_color=color_palette[1], corner_radius=20, hover_color=color_palette[2])
-        button.pack(padx=20, pady=10)
+        label = ctk.CTkLabel(app, text="", fg_color="transparent", font=("Verdana", 18))
+        label.pack(padx=20, pady=15)
+        button = ctk.CTkButton(app, text="Confirm", command=get_data, fg_color=color_palette[1], corner_radius=20, hover_color=color_palette[2], width=250, height=50)
+        button.pack(padx=20, pady=0)
 
 
 
@@ -254,6 +269,8 @@ def gui_setup():
     def view_tasks():
         for widget in app.winfo_children():
             widget.destroy()
+
+
 
     view_tasks_button = ctk.CTkButton(master=app,
                                               text="View tasks",
