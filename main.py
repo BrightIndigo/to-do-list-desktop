@@ -208,10 +208,19 @@ def gui_setup():
             selected_option = option_var.get()
             print("Selected option:", selected_option)
             data = selected_option + " " + text + " " + selected_date
+            with open("tasks.txt", "r") as file:
+                rows = file.readlines()
+            row_count = len(rows)
+
+            for i, row in enumerate(rows):
+                if row.strip() == "":
+                    rows[i] = data + '\n'
+                    break
+            else:
+                rows.append(data + '\n')
+
             with open("tasks.txt", "w") as file:
-                file.write(data)
-        #zczytaj ilość wierszy w tasks.txt i dodawaj kolejne zadania wiersz niżej od pozostałych
-        
+                file.writelines(rows)
 
         option_var = ctk.StringVar(value="Important")
         option_menu = ctk.CTkOptionMenu(app, values=["Important", "Average", "Negligible"],
@@ -269,6 +278,14 @@ def gui_setup():
     def view_tasks():
         for widget in app.winfo_children():
             widget.destroy()
+
+        with open("tasks.txt", "r") as file:
+            tasks = []
+            for i in file:
+                tasks.append(i)
+            print(tasks)
+
+
 
 
 
