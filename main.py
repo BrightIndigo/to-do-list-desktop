@@ -4,6 +4,7 @@ import customtkinter as ctk
 from threading import Thread
 from tkcalendar import Calendar, DateEntry
 from datetime import datetime
+from datetime import date
 
 def set_windowed_fullscreen(root):
     root.state('zoomed')
@@ -187,7 +188,8 @@ def gui_setup():
         for widget in app.winfo_children():
             widget.destroy()
 
-        button_gui_setup = ctk.CTkButton(master=app, text="Menu", command=gui_setup, width=200, height=50, fg_color=color_palette[2], corner_radius=20, hover_color=color_palette[1])
+        button_gui_setup = ctk.CTkButton(master=app, text="Menu", command=gui_setup, width=200, height=50,
+                                         fg_color=color_palette[2], corner_radius=20, hover_color=color_palette[1])
         button_gui_setup.pack(padx=20, pady=10)
 
         label = ctk.CTkLabel(app, text="", fg_color="transparent", font=("Verdana", 18))
@@ -201,31 +203,27 @@ def gui_setup():
             return choice
 
         def get_data():
-            selected_date = cal.get_date()
-            print("Selected Date is:", selected_date)
+            selected_date = cal.get_date()  # Get the selected date in the format 'mm/dd/yyyy'
+            formatted_date = datetime.strptime(selected_date, '%m/%d/%y').strftime(
+                '%d/%m/%Y')  # Convert to 'dd/mm/yyyy'
+            print("Selected Date is:", formatted_date)
+
             text = entry.get()
             print("Entry text:", text)
+
             selected_option = option_var.get()
             print("Selected option:", selected_option)
-            data = selected_option + " " + text + " " + selected_date
-            with open("tasks.txt", "r") as file:
-                rows = file.readlines()
-            row_count = len(rows)
 
-            for i, row in enumerate(rows):
-                if row.strip() == "":
-                    rows[i] = data + '\n'
-                    break
-            else:
-                rows.append(data + '\n')
+            data = f"{selected_option} {text} {formatted_date}\n"
 
-            with open("tasks.txt", "w") as file:
-                file.writelines(rows)
+            # Append the task to the tasks.txt file
+            with open("tasks.txt", "a") as file:
+                file.write(data)
 
         option_var = ctk.StringVar(value="Important")
         option_menu = ctk.CTkOptionMenu(app, values=["Important", "Average", "Negligible"],
                                         variable=option_var,
-                                        fg_color=color_palette[1],         # Background color of the option menu
+                                        fg_color=color_palette[1],
                                         button_color=color_palette[1],
                                         button_hover_color=color_palette[2])
         option_menu.pack(padx=20, pady=15)
@@ -245,17 +243,21 @@ def gui_setup():
         label = ctk.CTkLabel(app, text="Choose day of your task", fg_color="transparent", font=("Verdana", 18))
         label.pack(padx=20, pady=0)
 
-        #calendar
+        # Calendar
         now = datetime.now()
         current_year = now.year
         current_month = now.month
         current_day = now.day
 
-        cal = Calendar(app, selectmode='day', year=current_year, month=current_month, day=current_day, selectbackground=color_palette[1])
+        cal = Calendar(app, selectmode='day', year=current_year, month=current_month, day=current_day,
+                       selectbackground=color_palette[1])
         cal.pack(padx=20, pady=10)
+
         label = ctk.CTkLabel(app, text="", fg_color="transparent", font=("Verdana", 18))
         label.pack(padx=20, pady=15)
-        button = ctk.CTkButton(app, text="Confirm", command=get_data, fg_color=color_palette[1], corner_radius=20, hover_color=color_palette[2], width=250, height=50)
+
+        button = ctk.CTkButton(app, text="Confirm", command=get_data, fg_color=color_palette[1], corner_radius=20,
+                               hover_color=color_palette[2], width=250, height=50)
         button.pack(padx=20, pady=0)
 
 
@@ -279,15 +281,53 @@ def gui_setup():
         for widget in app.winfo_children():
             widget.destroy()
 
-        with open("tasks.txt", "r") as file:
-            tasks = []
-            for i in file:
-                tasks.append(i)
-            print(tasks)
+        button_gui_setup = ctk.CTkButton(master=app, text="Menu", command=gui_setup, width=200, height=50,
+                                         fg_color=color_palette[2], corner_radius=20, hover_color=color_palette[1])
+        button_gui_setup.pack(padx=20, pady=10)
 
+        try:
+            with open("tasks.txt", "r") as file:
+                data = [line.strip().split() for line in file]
+        except FileNotFoundError:
+            print("tasks.txt not found.")
+            return
 
+            # Function to disable interactions
 
+        def disable_interaction(event):
+            return "break"
 
+        now = datetime.now()
+        current_year = now.year
+        current_month = now.month
+        current_day = now.day
+
+        # Create a Calendar widget
+        cal = Calendar(app, selectmode='none',  # Disable selection
+                       year=current_year, month=current_month, day=current_day, selectbackground=color_palette[1])
+
+        # Disable clicks by binding mouse events to the disable_interaction function
+        cal.bind("<<CalendarSelected>>", disable_interaction)
+        cal.bind("<Button-1>", disable_interaction)
+
+        if len(data) > 0:
+            for i in range(len(data)):
+                try:
+                    # Assuming the date format is "dd/mm/yyyy"
+                    date_parts = data[i][2].split("/")
+                    task_date = date(int(date_parts[2]), int(date_parts[1]), int(date_parts[0]))  # (year, month, day)
+                    # Create an event on the calendar for the specific date
+                    cal.calevent_create(task_date, '', 'marked_day')
+                except (ValueError, IndexError):
+                    print(f"Skipping invalid date entry: {data[i]}")
+
+        # Customize the appearance of the marked days
+        cal.tag_config('marked_day', background='lightgreen', foreground='black')
+
+        cal.pack(pady=20)
+
+        # Force the calendar to refresh and show the events
+        cal.update_idletasks()
 
     view_tasks_button = ctk.CTkButton(master=app,
                                               text="View tasks",
