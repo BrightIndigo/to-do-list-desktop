@@ -318,6 +318,7 @@ def gui_setup():
                     task_date = date(int(date_parts[2]), int(date_parts[1]), int(date_parts[0]))  # (year, month, day)
                     # Create an event on the calendar for the specific date
                     cal.calevent_create(task_date, '', 'marked_day')
+
                 except (ValueError, IndexError):
                     print(f"Skipping invalid date entry: {data[i]}")
 
@@ -328,6 +329,18 @@ def gui_setup():
 
         # Force the calendar to refresh and show the events
         cal.update_idletasks()
+
+        def checkbox_event():
+            pass
+            # check_var.get())
+
+        for i in data:
+            check_var = ctk.StringVar(value="off")
+            checkbox = ctk.CTkCheckBox(app, text=i[0] + "\n" + i[1] + "\n" + i[2], command=checkbox_event, width=200,
+                                       variable=check_var, onvalue="on", offvalue="off")
+            checkbox.pack(padx=20, pady=20)
+
+
 
     view_tasks_button = ctk.CTkButton(master=app,
                                               text="View tasks",
