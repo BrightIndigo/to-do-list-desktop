@@ -277,6 +277,17 @@ def gui_setup():
                                               )
     tasks_button.pack(padx=20, pady=10)
 
+    def remove_task(task_data):
+        try:
+            with open("tasks.txt", "r") as file:
+                lines = file.readlines()
+            with open("tasks.txt", "w") as file:
+                for line in lines:
+                    if task_data not in line:
+                        file.write(line)
+        except FileNotFoundError:
+            print("tasks.txt not found.")
+
     def view_tasks():
         for widget in app.winfo_children():
             widget.destroy()
@@ -292,51 +303,41 @@ def gui_setup():
             print("tasks.txt not found.")
             return
 
-            # Function to disable interactions
-
-        def disable_interaction(event):
-            return "break"
-
         now = datetime.now()
         current_year = now.year
         current_month = now.month
         current_day = now.day
 
-        # Create a Calendar widget
-        cal = Calendar(app, selectmode='none',  # Disable selection
-                       year=current_year, month=current_month, day=current_day, selectbackground=color_palette[1])
+        def disable_interaction(event):
+            return "break"
 
-        # Disable clicks by binding mouse events to the disable_interaction function
+        # Calendar
+        cal = Calendar(app, selectmode='none',
+                       year=current_year, month=current_month, day=current_day, selectbackground=color_palette[1])
         cal.bind("<<CalendarSelected>>", disable_interaction)
         cal.bind("<Button-1>", disable_interaction)
 
         if len(data) > 0:
             for i in range(len(data)):
                 try:
-                    # Assuming the date format is "dd/mm/yyyy"
                     date_parts = data[i][2].split("/")
-                    task_date = date(int(date_parts[2]), int(date_parts[1]), int(date_parts[0]))  # (year, month, day)
-                    # Create an event on the calendar for the specific date
+                    task_date = date(int(date_parts[2]), int(date_parts[1]), int(date_parts[0]))
                     cal.calevent_create(task_date, '', 'marked_day')
-
                 except (ValueError, IndexError):
                     print(f"Skipping invalid date entry: {data[i]}")
 
-        # Customize the appearance of the marked days
         cal.tag_config('marked_day', background='lightgreen', foreground='black')
-
         cal.pack(pady=20)
-
-        # Force the calendar to refresh and show the events
         cal.update_idletasks()
 
-        def checkbox_event():
-            pass
-            # check_var.get())
+        def checkbox_event(task_text):
+            remove_task(task_text)  # Usuń zadanie z pliku
+            view_tasks()  # Odśwież listę zadań
 
         for i in data:
+            task_text = " ".join(i)
             check_var = ctk.StringVar(value="off")
-            checkbox = ctk.CTkCheckBox(app, text=i[0] + "\n" + i[1] + "\n" + i[2], command=checkbox_event, width=200,
+            checkbox = ctk.CTkCheckBox(app, text=task_text, command=lambda t=task_text: checkbox_event(t), width=200,
                                        variable=check_var, onvalue="on", offvalue="off")
             checkbox.pack(padx=20, pady=20)
 
