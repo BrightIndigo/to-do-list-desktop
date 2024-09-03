@@ -220,6 +220,8 @@ def gui_setup():
             with open("tasks.txt", "a") as file:
                 file.write(data)
 
+            gui_setup()
+
         option_var = ctk.StringVar(value="Important")
         option_menu = ctk.CTkOptionMenu(app, values=["Important", "Average", "Negligible"],
                                         variable=option_var,
